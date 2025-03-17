@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
@@ -47,6 +48,14 @@ func main() {
 	// Initialize Gin router
 	r := gin.Default()
 
+	// Configure CORS
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"} // Allow all origins not recommended for production
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	config.AllowCredentials = true
+	r.Use(cors.New(config))
+
 	// Swagger endpoint
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -68,8 +77,8 @@ func main() {
 	}
 
 	// Start server
-	log.Println("Server starting on :8080")
-	if err := r.Run(":8080"); err != nil {
+	log.Println("Server starting on 0.0.0.0:8080")
+	if err := r.Run("0.0.0.0:8080"); err != nil {
 		log.Fatal("Error starting server:", err)
 	}
 } 
